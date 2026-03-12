@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spacexbay22-invite.pages.dev/sitemap.xml
