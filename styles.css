@@ -1765,6 +1765,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
     gap: 1rem;
   }
 
+
   .offer-grid {
     grid-template-columns: 1fr;
   }
