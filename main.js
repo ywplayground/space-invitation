@@ -274,72 +274,53 @@
   revealItems.forEach((item) => revealObserver.observe(item));
 
   /* ─── 3. Theme switching based on sections ─── */
-  const darkSections = document.querySelectorAll(
-    '[data-theme-section="dark"]'
+  const darkSections = document.querySelectorAll('[data-theme-section="dark"]');
+  const transitionSection = document.querySelector(
+    '[data-theme-section="transition"]'
   );
 
-  const themeObserver = new IntersectionObserver(
-    (entries) => {
-      let anyDarkVisible = false;
+  const updateThemeMode = () => {
+    let anyDark = false;
+    const mid = window.innerHeight * 0.5;
 
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-          anyDarkVisible = true;
-        }
-      });
+    darkSections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top < mid && rect.bottom > mid) {
+        anyDark = true;
+      }
+    });
 
-      // Also check all dark sections (not just changed entries)
-      darkSections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        const threshold = window.innerHeight * 0.5;
-        if (rect.top < threshold && rect.bottom > threshold) {
-          anyDarkVisible = true;
-        }
-      });
-
-      document.body.classList.toggle("theme-dark", anyDarkVisible);
-    },
-    {
-      threshold: [0, 0.1, 0.3, 0.5, 0.7, 1],
-    }
-  );
-
-  darkSections.forEach((s) => themeObserver.observe(s));
-
-  // Also use scroll for better precision
-  let ticking = false;
-  window.addEventListener("scroll", () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      let anyDark = false;
-      const mid = window.innerHeight * 0.5;
-
-      darkSections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top < mid && rect.bottom > mid) {
+    if (!anyDark && transitionSection) {
+      const rect = transitionSection.getBoundingClientRect();
+      if (rect.top < mid && rect.bottom > mid) {
+        const progress = (mid - rect.top) / (rect.bottom - rect.top);
+        if (progress > 0.5) {
           anyDark = true;
         }
-      });
-
-      // Also check transition section
-      const transition = document.querySelector(
-        '[data-theme-section="transition"]'
-      );
-      if (transition) {
-        const tRect = transition.getBoundingClientRect();
-        if (tRect.top < mid && tRect.bottom > mid) {
-          // In transition zone — check if past halfway
-          const progress =
-            (mid - tRect.top) / (tRect.bottom - tRect.top);
-          if (progress > 0.5) anyDark = true;
-        }
       }
+    }
 
-      document.body.classList.toggle("theme-dark", anyDark);
-      ticking = false;
+    document.body.classList.toggle("theme-dark", anyDark);
+  };
+
+  let themeTicking = false;
+  const scheduleThemeUpdate = () => {
+    if (themeTicking) return;
+    themeTicking = true;
+    requestAnimationFrame(() => {
+      updateThemeMode();
+      themeTicking = false;
     });
-  });
+  };
+
+  if (darkSections.length || transitionSection) {
+    updateThemeMode();
+    window.addEventListener("scroll", scheduleThemeUpdate, { passive: true });
+    window.addEventListener("resize", scheduleThemeUpdate, { passive: true });
+    window.visualViewport?.addEventListener("resize", scheduleThemeUpdate, {
+      passive: true,
+    });
+  }
 
   /* ─── 4. Horizontal gallery drag scroll ─── */
   const galleryScroll = document.getElementById("gallery-a");
