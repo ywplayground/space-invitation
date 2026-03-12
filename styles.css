@@ -84,6 +84,18 @@
   initial-value: 1;
 }
 
+@property --card-tilt-x {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --card-tilt-y {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 /* ─── Reset ─── */
 *, *::before, *::after { box-sizing: border-box; }
 html {
@@ -336,6 +348,18 @@ body::after {
   --card-float-rotate: 0deg;
   --card-hover-lift: 0px;
   --card-hover-scale: 1;
+  --card-tilt-x: 0deg;
+  --card-tilt-y: 0deg;
+  --card-gloss-x: 50%;
+  --card-gloss-y: 22%;
+  --card-sheen-angle: 118deg;
+  --card-gloss-strength: 0;
+  --card-inner-shift-x: 0px;
+  --card-inner-shift-y: 0px;
+  --card-shadow-x: 0px;
+  --card-shadow-y: 18px;
+  --card-shadow-blur: 60px;
+  --card-shadow-alpha: 0.42;
   position: relative;
   width: min(470px, calc(100vw - 2.5rem));
   aspect-ratio: 5 / 6;
@@ -353,8 +377,9 @@ body::after {
   backdrop-filter: blur(18px) saturate(1.1);
   -webkit-backdrop-filter: blur(18px) saturate(1.1);
   border: 1px solid rgba(255, 241, 220, 0.44);
+  overflow: hidden;
   box-shadow:
-    0 18px 60px rgba(8, 6, 4, 0.42),
+    var(--card-shadow-x) var(--card-shadow-y) var(--card-shadow-blur) rgba(8, 6, 4, var(--card-shadow-alpha)),
     inset 0 1px 0 rgba(255, 250, 241, 0.56),
     inset 0 -30px 54px rgba(78, 50, 28, 0.16);
   display: flex;
@@ -366,11 +391,17 @@ body::after {
       calc(var(--card-float-y) + var(--card-hover-lift)),
       0
     )
-    rotate(var(--card-float-rotate))
+    rotateX(var(--card-tilt-x))
+    rotateY(var(--card-tilt-y))
+    rotateZ(var(--card-float-rotate))
     scale(var(--card-hover-scale));
   transform-origin: 50% 58%;
+  transform-style: preserve-3d;
   will-change: transform, box-shadow, filter;
   backface-visibility: hidden;
+  filter:
+    brightness(calc(1 + (var(--card-gloss-strength) * 0.018)))
+    saturate(calc(1 + (var(--card-gloss-strength) * 0.032)));
   transition:
     --card-hover-lift 700ms var(--ease-out),
     --card-hover-scale 700ms var(--ease-out),
@@ -386,10 +417,26 @@ body::after {
   inset: 1px;
   border-radius: inherit;
   background:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.06) 28%, rgba(255, 255, 255, 0.28) 44%, rgba(255, 255, 255, 0) 74%),
-    radial-gradient(circle at 22% 12%, rgba(255, 255, 255, 0.45), transparent 54%);
-  opacity: 0.42;
+    linear-gradient(
+      var(--card-sheen-angle),
+      rgba(255, 255, 255, 0) 16%,
+      rgba(255, 255, 255, 0.024) 34%,
+      rgba(255, 255, 255, calc(0.085 + (var(--card-gloss-strength) * 0.11))) 50%,
+      rgba(255, 255, 255, 0.03) 60%,
+      rgba(255, 255, 255, 0) 74%
+    ),
+    radial-gradient(
+      ellipse 34% 26% at var(--card-gloss-x) var(--card-gloss-y),
+      rgba(255, 255, 255, calc(0.12 + (var(--card-gloss-strength) * 0.14))) 0%,
+      rgba(255, 250, 241, calc(0.08 + (var(--card-gloss-strength) * 0.1))) 16%,
+      rgba(255, 248, 236, 0.028) 34%,
+      transparent 62%
+    ),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.54) 0%, rgba(255, 255, 255, 0.06) 28%, rgba(255, 255, 255, 0.22) 44%, rgba(255, 255, 255, 0) 74%),
+    radial-gradient(circle at 22% 12%, rgba(255, 255, 255, 0.34), transparent 54%);
+  opacity: calc(0.18 + (var(--card-gloss-strength) * 0.16));
   pointer-events: none;
+  will-change: opacity, background;
 }
 
 .glass-card::after {
@@ -398,6 +445,9 @@ body::after {
   inset: 0.85rem;
   border-radius: 21px;
   border: 1px solid rgba(255, 240, 209, 0.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 244, 224, calc(0.02 + (var(--card-gloss-strength) * 0.08))),
+    0 0 20px rgba(255, 219, 168, calc(var(--card-gloss-strength) * 0.04));
   pointer-events: none;
 }
 
@@ -429,12 +479,12 @@ body::after {
   }
 }
 
-.glass-card:hover {
+.glass-card:is(:hover, .is-tilting) {
   --card-hover-lift: -7px;
   --card-hover-scale: 1.018;
   border-color: rgba(255, 242, 216, 0.66);
   box-shadow:
-    0 24px 74px rgba(8, 6, 4, 0.5),
+    var(--card-shadow-x) calc(var(--card-shadow-y) + 4px) calc(var(--card-shadow-blur) + 10px) rgba(8, 6, 4, calc(var(--card-shadow-alpha) + 0.06)),
     inset 0 1px 0 rgba(255, 250, 241, 0.66),
     inset 0 -32px 58px rgba(78, 50, 28, 0.18);
 }
@@ -453,6 +503,9 @@ body::after {
   flex-direction: column;
   align-items: center;
   gap: 1.1rem;
+  transform: translate3d(var(--card-inner-shift-x), var(--card-inner-shift-y), 34px);
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .glass-eyebrow {
@@ -1957,6 +2010,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
   transform: none;
   backdrop-filter: blur(12px) saturate(1.02);
   -webkit-backdrop-filter: blur(12px) saturate(1.02);
+  filter: none;
 }
 
 .ios-in-app .inv-stage::before {
