@@ -84,11 +84,21 @@
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 body { margin: 0; overflow-x: hidden; font-family: var(--font-body); color: var(--text); background: var(--bg); line-height: 1.7; }
 img { display: block; max-width: 100%; height: auto; }
+picture { display: block; }
 a { color: inherit; text-decoration: none; }
 p, h1, h2, h3, h4, dl, dt, dd, ul, figure { margin: 0; }
 ul { padding: 0; list-style: none; }
 button { border: none; background: none; cursor: pointer; font: inherit; color: inherit; }
 [id] { scroll-margin-top: 5rem; }
+
+.inv-bg picture,
+.hero-bg picture,
+.gallery-scroll figure picture,
+.gallery-detail-grid figure picture,
+.gallery-grid figure picture {
+  width: 100%;
+  height: 100%;
+}
 
 /* ─── Page grain texture ─── */
 body::after {
