@@ -1315,6 +1315,15 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
   filter: blur(0);
 }
 
+@keyframes zone-b-mobile-pan {
+  0% {
+    transform: translate3d(0, -3.5%, 0) scale(1.012);
+  }
+  100% {
+    transform: translate3d(0, 3.5%, 0) scale(1.012);
+  }
+}
+
 /* ══════════════════════════════════════════════
    ZONE B — 日式復古棚
    ══════════════════════════════════════════════ */
@@ -1892,6 +1901,40 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 
   .gallery-grid figure {
     aspect-ratio: 4 / 3;
+  }
+
+  .zone-b .gallery-grid figure img {
+    height: calc(100% + 14%);
+    margin-top: -7%;
+    will-change: transform;
+    animation: zone-b-mobile-pan 17.5s cubic-bezier(0.42, 0, 0.28, 1) infinite alternate;
+  }
+
+  .zone-b .gallery-grid .grid-a img {
+    animation-duration: 18.6s;
+    animation-delay: -3.4s;
+  }
+
+  .zone-b .gallery-grid .grid-b img {
+    animation-duration: 16.8s;
+    animation-delay: -7.2s;
+    animation-direction: alternate-reverse;
+  }
+
+  .zone-b .gallery-grid .grid-c img {
+    animation-duration: 19.4s;
+    animation-delay: -5.1s;
+  }
+
+  .zone-b .gallery-grid .grid-d img {
+    animation-duration: 17.2s;
+    animation-delay: -9.4s;
+    animation-direction: alternate-reverse;
+  }
+
+  .zone-b .gallery-grid .grid-e img {
+    animation-duration: 20.2s;
+    animation-delay: -6.8s;
   }
 
   .chapter-heading {

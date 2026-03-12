@@ -5,6 +5,28 @@
 (function () {
   "use strict";
 
+  const navigationEntry = performance.getEntriesByType?.("navigation")?.[0];
+  const shouldResetScroll =
+    !window.location.hash &&
+    (!navigationEntry ||
+      navigationEntry.type === "navigate" ||
+      navigationEntry.type === "reload");
+
+  const resetScrollToTop = () => {
+    if (!shouldResetScroll) return;
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  };
+
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
+  resetScrollToTop();
+  requestAnimationFrame(resetScrollToTop);
+  window.addEventListener("load", resetScrollToTop, { once: true });
+
   /* ─── 1. Invitation open (Door Reveal) ─── */
   const invitation = document.getElementById("invitation");
   const openInvitation = document.getElementById("open-invitation");
@@ -184,4 +206,5 @@
 
     heroObserver.observe(hero);
   }
+
 })();
