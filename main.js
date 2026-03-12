@@ -5,6 +5,36 @@
 (function () {
   "use strict";
 
+  const root = document.documentElement;
+  const userAgent = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+  const isIOSDevice =
+    /iP(hone|ad|od)/.test(userAgent) ||
+    (platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isIOSInAppWebView =
+    isIOSDevice &&
+    /(Instagram|FBAN|FBAV|Line|MicroMessenger|GSA|CriOS|EdgiOS|DuckDuckGo)/i.test(
+      userAgent
+    );
+
+  if (isIOSInAppWebView) {
+    root.classList.add("ios-in-app");
+  }
+
+  const updateViewportMetrics = () => {
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    root.style.setProperty("--app-height", `${Math.round(viewportHeight)}px`);
+  };
+
+  updateViewportMetrics();
+  window.addEventListener("resize", updateViewportMetrics, { passive: true });
+  window.addEventListener("orientationchange", updateViewportMetrics, {
+    passive: true,
+  });
+  window.visualViewport?.addEventListener("resize", updateViewportMetrics, {
+    passive: true,
+  });
+
   const navigationEntry = performance.getEntriesByType?.("navigation")?.[0];
   const shouldResetScroll =
     !window.location.hash &&
