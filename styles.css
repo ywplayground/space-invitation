@@ -8,7 +8,7 @@
   --font-body: "Libre Baskerville", "Noto Serif TC", serif;
   --font-sans: "Noto Serif TC", serif;
 
-  /* Light palette (Zone A) */
+/* Light palette for 日光柔光棚 */
   --bg: #faf8f5;
   --bg-warm: #f5f0ea;
   --text: #1c1814;
@@ -17,7 +17,7 @@
   --surface: rgba(255, 252, 248, 0.72);
   --surface-solid: #fffcf8;
 
-  /* Dark palette (Zone B) */
+/* Dark palette for 日式復古棚 */
   --bg-dark: #1a1512;
   --bg-dark-surface: rgba(42, 32, 24, 0.6);
   --text-dark: #f0e8df;
@@ -1035,7 +1035,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 }
 
 /* ══════════════════════════════════════════════
-   ZONE A — 日光柔光棚
+   日光柔光棚
    ══════════════════════════════════════════════ */
 .zone-a {
   padding: 6rem 0 0;
@@ -1060,8 +1060,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 .zone-index {
   font-family: var(--font-display);
   font-size: 0.72rem;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
+  letter-spacing: 0.18em;
   color: var(--gold);
 }
 
@@ -1300,8 +1299,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 .chapter-index {
   font-family: var(--font-display);
   font-size: 0.72rem;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
+  letter-spacing: 0.18em;
   color: rgba(112, 83, 53, 0.8);
   display: block;
 }
@@ -1315,8 +1313,9 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 }
 
 .rail-dot {
-  width: 2.2rem;
+  min-width: 2.2rem;
   height: 2.2rem;
+  padding: 0 0.7rem;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
@@ -1325,6 +1324,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
   font-size: 0.62rem;
   letter-spacing: 0.12em;
   border: 1px solid;
+  white-space: nowrap;
 }
 
 .rail-dot-a {
@@ -1381,8 +1381,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 
 .chapter-caption {
   font-size: 0.66rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  letter-spacing: 0.12em;
   color: rgba(108, 84, 59, 0.58);
   margin-left: 0.28em;
 }
@@ -1411,7 +1410,7 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 }
 
 /* ══════════════════════════════════════════════
-   ZONE B — 日式復古棚
+   日式復古棚
    ══════════════════════════════════════════════ */
 .zone-b {
   padding: 6rem 0 0;
@@ -2015,13 +2014,14 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
   }
 
   .rail-dot {
-    width: 2.1rem;
+    min-width: 2.1rem;
     height: 2.1rem;
+    padding: 0 0.58rem;
     font-size: 0.62rem;
   }
 
   .chapter-caption {
-    letter-spacing: 0.24em;
+    letter-spacing: 0.08em;
     font-size: 0.6rem;
   }
 
