@@ -62,7 +62,58 @@
   const openInvitation = document.getElementById("open-invitation");
   const header = document.getElementById("site-header");
   const hero = document.querySelector(".hero");
+  const samePageAnchors = document.querySelectorAll('a[href^="#"]');
   let disableInvitationCardTilt = null;
+
+  const getAnchorOffset = () => {
+    const headerHeight = header?.getBoundingClientRect().height || 0;
+    return headerHeight + 16;
+  };
+
+  const scrollToHashTarget = (hash, behavior = "smooth") => {
+    if (!hash || hash === "#") return false;
+
+    const target = document.querySelector(hash);
+    if (!target) return false;
+
+    const targetTop =
+      window.scrollY + target.getBoundingClientRect().top - getAnchorOffset();
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: prefersReducedMotion ? "auto" : behavior,
+    });
+
+    return true;
+  };
+
+  samePageAnchors.forEach((anchor) => {
+    anchor.addEventListener("click", (event) => {
+      const hash = anchor.getAttribute("href");
+      if (!hash || hash === "#") return;
+
+      event.preventDefault();
+      const didScroll = scrollToHashTarget(hash);
+      if (!didScroll) return;
+
+      if (window.location.hash !== hash) {
+        history.pushState(null, "", hash);
+      }
+    });
+  });
+
+  window.addEventListener("hashchange", () => {
+    scrollToHashTarget(window.location.hash, "auto");
+  });
+
+  if (!invitation && window.location.hash) {
+    requestAnimationFrame(() => {
+      scrollToHashTarget(window.location.hash, "auto");
+    });
+  }
 
   const setupInvitationCardTilt = () => {
     if (
@@ -224,6 +275,9 @@
       }
 
       isOpening = true;
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
       disableInvitationCardTilt?.();
       disableInvitationCardTilt = null;
       invitation.classList.add("is-opening");
