@@ -1214,16 +1214,36 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
 }
 
 .feature-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--gold-dim);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 248, 232, 0.16), transparent 42%),
+    var(--gold-dim);
+  border: 1px solid rgba(201, 169, 110, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
   margin-bottom: 1rem;
   color: var(--gold);
+  box-shadow: inset 0 1px 0 rgba(255, 251, 243, 0.24);
+}
+
+.feature-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  opacity: 0.96;
+}
+
+.feature-icon .icon-fill {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0.18;
 }
 
 .feature-card h4 {
