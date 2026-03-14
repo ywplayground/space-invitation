@@ -380,34 +380,92 @@
   const galleryScroll = document.getElementById("gallery-a");
 
   if (galleryScroll) {
-    let isDown = false;
-    let startX;
-    let scrollLeft;
+    const galleryImages = galleryScroll.querySelectorAll("img");
+    const canDragWithMouse = window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
+    ).matches;
 
-    galleryScroll.addEventListener("mousedown", (e) => {
-      isDown = true;
-      galleryScroll.style.cursor = "grabbing";
-      startX = e.pageX - galleryScroll.offsetLeft;
-      scrollLeft = galleryScroll.scrollLeft;
+    galleryImages.forEach((image) => {
+      image.setAttribute("draggable", "false");
+      image.addEventListener("dragstart", (event) => {
+        event.preventDefault();
+      });
     });
 
-    galleryScroll.addEventListener("mouseleave", () => {
-      isDown = false;
-      galleryScroll.style.cursor = "grab";
-    });
+    if (window.PointerEvent && canDragWithMouse) {
+      let activePointerId = null;
+      let startX = 0;
+      let startScrollLeft = 0;
+      let pendingScrollLeft = 0;
+      let dragFrame = 0;
 
-    galleryScroll.addEventListener("mouseup", () => {
-      isDown = false;
-      galleryScroll.style.cursor = "grab";
-    });
+      const flushDragScroll = () => {
+        dragFrame = 0;
+        galleryScroll.scrollLeft = pendingScrollLeft;
+      };
 
-    galleryScroll.addEventListener("mousemove", (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - galleryScroll.offsetLeft;
-      const walk = (x - startX) * 1.8;
-      galleryScroll.scrollLeft = scrollLeft - walk;
-    });
+      const queueDragScroll = () => {
+        if (dragFrame) return;
+        dragFrame = window.requestAnimationFrame(flushDragScroll);
+      };
+
+      const stopDragging = () => {
+        if (dragFrame) {
+          window.cancelAnimationFrame(dragFrame);
+          dragFrame = 0;
+          galleryScroll.scrollLeft = pendingScrollLeft;
+        }
+        activePointerId = null;
+        galleryScroll.classList.remove("is-dragging");
+      };
+
+      galleryScroll.addEventListener("pointerdown", (event) => {
+        if (event.pointerType !== "mouse" || event.button !== 0) return;
+
+        activePointerId = event.pointerId;
+        startX = event.clientX;
+        startScrollLeft = galleryScroll.scrollLeft;
+        pendingScrollLeft = startScrollLeft;
+        galleryScroll.classList.add("is-dragging");
+        galleryScroll.setPointerCapture(event.pointerId);
+      });
+
+      galleryScroll.addEventListener("pointermove", (event) => {
+        if (event.pointerId !== activePointerId) return;
+
+        event.preventDefault();
+        const walk = (event.clientX - startX) * 1.8;
+        pendingScrollLeft = startScrollLeft - walk;
+        queueDragScroll();
+      });
+
+      galleryScroll.addEventListener("pointerup", (event) => {
+        if (event.pointerId !== activePointerId) return;
+        galleryScroll.releasePointerCapture(event.pointerId);
+        stopDragging();
+      });
+
+      galleryScroll.addEventListener("pointercancel", (event) => {
+        if (event.pointerId !== activePointerId) return;
+        stopDragging();
+      });
+
+      galleryScroll.addEventListener("lostpointercapture", stopDragging);
+
+      galleryScroll.addEventListener(
+        "wheel",
+        (event) => {
+          if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+
+          event.preventDefault();
+          galleryScroll.scrollBy({
+            left: event.deltaY,
+            behavior: "auto",
+          });
+        },
+        { passive: false }
+      );
+    }
   }
 
   /* ─── 5. Header show after scroll past hero ─── */
