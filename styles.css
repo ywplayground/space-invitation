@@ -2,6 +2,70 @@
    光嶼沐境  SpaceXbay22  —  Opening Invitation
    ═══════════════════════════════════════════════ */
 
+@font-face {
+  font-family: "Libre Baskerville";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/libre-baskerville-400-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/playfair-display-500-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/playfair-display-600-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/playfair-display-700-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Serif TC";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/noto-serif-tc-400-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Serif TC";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/noto-serif-tc-500-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Serif TC";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/noto-serif-tc-600-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Serif TC";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/noto-serif-tc-700-subset.woff2") format("woff2");
+}
+
 /* ─── Design Tokens ─── */
 :root {
   --font-display: "Playfair Display", "Noto Serif TC", serif;
