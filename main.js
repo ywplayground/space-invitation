@@ -36,11 +36,14 @@
   });
 
   const navigationEntry = performance.getEntriesByType?.("navigation")?.[0];
+  const navigationType = navigationEntry?.type || "navigate";
+  const rawHash =
+    window.location.hash && window.location.hash !== "#"
+      ? window.location.hash
+      : "";
+  const isReload = navigationType === "reload";
   const shouldResetScroll =
-    !window.location.hash &&
-    (!navigationEntry ||
-      navigationEntry.type === "navigate" ||
-      navigationEntry.type === "reload");
+    isReload || (!rawHash && (!navigationEntry || navigationType === "navigate"));
 
   const resetScrollToTop = () => {
     if (!shouldResetScroll) return;
@@ -63,7 +66,17 @@
   const header = document.getElementById("site-header");
   const hero = document.querySelector(".hero");
   const samePageAnchors = document.querySelectorAll('a[href^="#"]');
+  const initialHash = isReload ? "" : rawHash;
   let disableInvitationCardTilt = null;
+  let hashScrollCorrectionTimer = 0;
+
+  if (isReload && rawHash) {
+    history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${window.location.search}`
+    );
+  }
 
   const getAnchorOffset = () => {
     const headerHeight = header?.getBoundingClientRect().height || 0;
@@ -90,6 +103,25 @@
     return true;
   };
 
+  const scheduleHashScroll = (hash, behavior = "auto") => {
+    if (!hash || hash === "#") return;
+
+    if (hashScrollCorrectionTimer) {
+      window.clearTimeout(hashScrollCorrectionTimer);
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollToHashTarget(hash, behavior);
+      });
+    });
+
+    hashScrollCorrectionTimer = window.setTimeout(() => {
+      scrollToHashTarget(hash, "auto");
+      hashScrollCorrectionTimer = 0;
+    }, 260);
+  };
+
   samePageAnchors.forEach((anchor) => {
     anchor.addEventListener("click", (event) => {
       const hash = anchor.getAttribute("href");
@@ -98,6 +130,7 @@
       event.preventDefault();
       const didScroll = scrollToHashTarget(hash);
       if (!didScroll) return;
+      scheduleHashScroll(hash, "auto");
 
       if (window.location.hash !== hash) {
         history.pushState(null, "", hash);
@@ -109,10 +142,8 @@
     scrollToHashTarget(window.location.hash, "auto");
   });
 
-  if (!invitation && window.location.hash) {
-    requestAnimationFrame(() => {
-      scrollToHashTarget(window.location.hash, "auto");
-    });
+  if (!invitation && initialHash) {
+    scheduleHashScroll(initialHash, "auto");
   }
 
   const setupInvitationCardTilt = () => {
@@ -293,6 +324,7 @@
         document.body.classList.remove("inv-locked");
         header?.classList.add("is-visible");
         hero?.classList.add("is-active");
+        scheduleHashScroll(initialHash, "auto");
       }, 320);
 
       // Finally remove from DOM
