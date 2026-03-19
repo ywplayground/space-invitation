@@ -747,6 +747,7 @@ body.theme-dark .brand-sub {
 .site-nav a {
   position: relative;
   padding: 0.3rem 0;
+  white-space: nowrap;
   color: var(--text-muted);
   transition: color 0.3s ease;
 }
@@ -2031,6 +2032,12 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
   }
 
   .brand-sub { display: none; }
+
+  .site-nav {
+    gap: 0.8rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+  }
 
   .gallery-scroll .fig-wide {
     width: 85vw;
