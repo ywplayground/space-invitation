@@ -1614,6 +1614,11 @@ body.theme-dark .site-nav a:hover { color: var(--text-dark); }
   }
 }
 
+.is-anchor-scroll-ready {
+  content-visibility: visible !important;
+  contain-intrinsic-size: auto !important;
+}
+
 .offer-card {
   width: var(--content-w);
   margin: 0 auto 3.2rem;

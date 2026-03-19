@@ -66,9 +66,11 @@
   const header = document.getElementById("site-header");
   const hero = document.querySelector(".hero");
   const samePageAnchors = document.querySelectorAll('a[href^="#"]');
+  const lazySections = document.querySelectorAll(
+    ".zone-a, .chapter-break, .zone-b, .forms-section"
+  );
   const initialHash = isReload ? "" : rawHash;
   let disableInvitationCardTilt = null;
-  let hashScrollCorrectionTimer = 0;
 
   if (isReload && rawHash) {
     history.replaceState(
@@ -83,11 +85,42 @@
     return headerHeight + 16;
   };
 
+  const prepareHashTarget = (target) => {
+    let didRevealLazySection = false;
+
+    lazySections.forEach((section) => {
+      if (window.getComputedStyle(section).contentVisibility !== "auto") return;
+
+      const isBeforeOrContainingTarget =
+        section === target ||
+        section.contains(target) ||
+        Boolean(
+          section.compareDocumentPosition(target) &
+            Node.DOCUMENT_POSITION_FOLLOWING
+        );
+
+      if (isBeforeOrContainingTarget) {
+        section.classList.add("is-anchor-scroll-ready");
+        didRevealLazySection = true;
+      }
+    });
+
+    if (target.matches?.("[data-reveal]")) {
+      target.classList.add("is-visible");
+    }
+
+    if (didRevealLazySection) {
+      document.body.offsetHeight;
+    }
+  };
+
   const scrollToHashTarget = (hash, behavior = "smooth") => {
     if (!hash || hash === "#") return false;
 
     const target = document.querySelector(hash);
     if (!target) return false;
+
+    prepareHashTarget(target);
 
     const targetTop =
       window.scrollY + target.getBoundingClientRect().top - getAnchorOffset();
@@ -106,20 +139,11 @@
   const scheduleHashScroll = (hash, behavior = "auto") => {
     if (!hash || hash === "#") return;
 
-    if (hashScrollCorrectionTimer) {
-      window.clearTimeout(hashScrollCorrectionTimer);
-    }
-
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         scrollToHashTarget(hash, behavior);
       });
     });
-
-    hashScrollCorrectionTimer = window.setTimeout(() => {
-      scrollToHashTarget(hash, "auto");
-      hashScrollCorrectionTimer = 0;
-    }, 260);
   };
 
   samePageAnchors.forEach((anchor) => {
@@ -130,7 +154,6 @@
       event.preventDefault();
       const didScroll = scrollToHashTarget(hash);
       if (!didScroll) return;
-      scheduleHashScroll(hash, "auto");
 
       if (window.location.hash !== hash) {
         history.pushState(null, "", hash);
